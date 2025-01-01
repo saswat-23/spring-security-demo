@@ -3,12 +3,16 @@ package com.s23.springsecurity.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.s23.springsecurity.dto.Employee;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("/emp")
 @RestController
@@ -26,8 +30,14 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/save")
-	public Employee addEmployee(Employee newEmp) {
+	public Employee addEmployee(@RequestBody Employee newEmp) {
 		return saveEmployee(newEmp);
+	}
+	
+	// This API will provide the CRSF token which generated (for the requesting client) after Authentication.
+	@GetMapping("/getCsrf")
+	public CsrfToken getCsrfToken(HttpServletRequest request) {
+		return (CsrfToken) request.getAttribute("_csrf");
 	}
 	
 	private void populateEmployees() {
