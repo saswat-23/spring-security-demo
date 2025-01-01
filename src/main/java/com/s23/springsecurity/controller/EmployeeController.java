@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.s23.springsecurity.dto.Employee;
+import com.s23.springsecurity.dto.EmployeeDTO;
+import com.s23.springsecurity.entity.Employee;
+import com.s23.springsecurity.repo.EmployeeRepo;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -18,19 +20,32 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class EmployeeController {
 
-	List<Employee> employees = new ArrayList<>();
+	EmployeeRepo empRepo;
+	
+	public EmployeeController(EmployeeRepo employeeRepo) {
+		this.empRepo = employeeRepo;
+	}
+	
+	//Registers a new Employee in the DB
+	@PostMapping("/register")
+	public Employee registerEmployee(@RequestBody Employee newEmp) {
+		return empRepo.save(newEmp);
+	}
+	
+	List<EmployeeDTO> employees = new ArrayList<>();
 	{
 		populateEmployees();
 		System.out.println("Default empList populated...");
 	}
 	
 	@GetMapping("/getAll")
-	public List<Employee> getAllEmployeeData() {
+	public List<EmployeeDTO> getAllEmployeeData() {
 		return employees;
 	}
 	
+	// Saves user in memory
 	@PostMapping("/save")
-	public Employee addEmployee(@RequestBody Employee newEmp) {
+	public EmployeeDTO addEmployee(@RequestBody EmployeeDTO newEmp) {
 		return saveEmployee(newEmp);
 	}
 	
@@ -41,13 +56,13 @@ public class EmployeeController {
 	}
 	
 	private void populateEmployees() {
-		employees.add(new Employee(101, "Saswat", 14500.00));
-		employees.add(new Employee(102, "Sarita", 22600.00));
-		employees.add(new Employee(103, "Adi", 6800.00));
-		employees.add(new Employee(104, "Sanu", 21500.00));
+		employees.add(new EmployeeDTO(101, "Saswat", 14500.00));
+		employees.add(new EmployeeDTO(102, "Sarita", 22600.00));
+		employees.add(new EmployeeDTO(103, "Adi", 6800.00));
+		employees.add(new EmployeeDTO(104, "Sanu", 21500.00));
 	}
 	
-	private Employee saveEmployee(Employee newEmp) {
+	private EmployeeDTO saveEmployee(EmployeeDTO newEmp) {
 		employees.add(newEmp);
 		return employees.get(employees.size()-1);
 	}
